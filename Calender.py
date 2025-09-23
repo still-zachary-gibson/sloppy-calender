@@ -42,12 +42,24 @@ def get_current_month(dater):
         if cool_dates[i] == "":
             theOtherThing[i].config(bg="gray67")
             theDays[i].config(style="WD.TFrame")
+            if i > 35: 
+                if cool_dates[35] == "":
+                    theDays[i].grid_remove()
+                else:
+                    theDays[i].grid()
+            elif i == 35:
+                theOtherThing[i].config(bg=str(style.lookup("TFrame", "background", default="", state=())))
+                theDays[i].config(style="invis.TFrame", relief=FLAT)
         elif cool_dates[i] == str(the_day) and dater.month == trueDay.month and dater.year == trueDay.year:
             theOtherThing[i].config(bg="light sky blue")
-            theDays[i].config(style="WEDsa.TFrame")
+            theDays[i].config(style="WEDsa.TFrame", relief=SOLID)
+            if i >= 35 and cool_dates[35] != "":
+                theDays[i].grid()
         else:
             theOtherThing[i].config(bg="white")
-            theDays[i].config(style="WED.TFrame")
+            theDays[i].config(style="WED.TFrame", relief=SOLID)
+            if i >= 35 and cool_dates[35] != "":
+                theDays[i].grid()
 
 #print(cool_modulo(datetime.datetime.weekday(datetime.datetime.now())+1,7)
 
@@ -107,10 +119,17 @@ calender = ttk.Frame(root, padding=10)#, width=700/2+16,height=50*8+4*8)
 #monthBox = ttk.Frame(calender, )
 
 style = ttk.Style()
+
+#print(style.theme_settings(style.theme_use(), background="black"))
+
 style.configure("BW.TLabel", foreground="black", background="white")
 style.configure("WD.TFrame", background="gray67")
 style.configure("WED.TFrame", background="white")
 style.configure("WEDsa.TFrame", background="light sky blue")
+
+#print(style.layout('WD.TFrame'))
+
+style.configure("invis.TFrame", background=str(style.lookup("TFrame", "background", default="", state=())))
 
 the_month = StringVar()
 the_month.set("September")
@@ -178,7 +197,11 @@ current_thing = datetime.datetime(trueDay.year,trueDay.month,trueDay.day)
 
 get_current_month(current_thing)
 
-print(root)
+#background_color = style.lookup("TFrame", "background", default="", state=())
+
+#print(f"The background color of the TFrame is: {background_color}")
+
+#print(root)
 
 '''
 ttk.Label(calender, text="The Month Goes Here").grid(column=0, row=0, rowspan=7, sticky=(N))
