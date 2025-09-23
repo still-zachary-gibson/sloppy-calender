@@ -9,6 +9,29 @@ from tkinter import font as tkfont
 
 import datetime
 
+def has_a_holiday(day, month, year):
+    if "_"+str(month) in holidays:
+        if str(day) in holidays["_"+str(month)]:
+            print(get_all_holidays(day, month, year))
+            return True
+    if str(month) + str(year) in holidays:
+        if str(day) in holidays[str(month) + str(year)]:
+            return True
+
+def get_all_holidays(day, month, year):
+    return_ma = []
+
+    if str(month) + str(year) in holidays:
+        if str(day) in holidays[str(month) + str(year)]:
+            for holdiaf in holidays[str(month) + str(year)][str(day)]:
+                return_ma.append([holdiaf, False])
+    if "_"+str(month) in holidays:
+        if str(day) in holidays["_"+str(month)]:
+            for holdiaf in holidays["_"+str(month)][str(day)]:
+                return_ma.append([holdiaf, True])
+
+    return return_ma
+
 def cool_modulo(n,d):
     if(n % d >= 0):
         return n % d
@@ -41,7 +64,7 @@ def get_current_month(dater):
         theOtherThing[i].config(text=cool_dates[i])
         if cool_dates[i] == "":
             theOtherThing[i].config(bg="gray67")
-            theDays[i].config(style="WD.TFrame")
+            theDays[i].config(style="NotADay.TFrame")
             if i > 35: 
                 if cool_dates[35] == "":
                     theDays[i].grid_remove()
@@ -52,12 +75,15 @@ def get_current_month(dater):
                 theDays[i].config(style="invis.TFrame", relief=FLAT)
         elif cool_dates[i] == str(the_day) and dater.month == trueDay.month and dater.year == trueDay.year:
             theOtherThing[i].config(bg="light sky blue")
-            theDays[i].config(style="WEDsa.TFrame", relief=SOLID)
+            theDays[i].config(style="Today.TFrame", relief=SOLID)
             if i >= 35 and cool_dates[35] != "":
                 theDays[i].grid()
         else:
             theOtherThing[i].config(bg="white")
-            theDays[i].config(style="WED.TFrame", relief=SOLID)
+            theDays[i].config(style="Day.TFrame", relief=SOLID)
+            if has_a_holiday(cool_dates[i], dater.month, dater.year):
+                theOtherThing[i].config(bg="tomato")
+                theDays[i].config(style="Holiday.TFrame", relief=SOLID)
             if i >= 35 and cool_dates[35] != "":
                 theDays[i].grid()
 
@@ -65,7 +91,13 @@ def get_current_month(dater):
 
 import math
 
+holidays = dict()
+
+holidays["_12"] = {"25": ["Christmas"]}
+holidays["122025"] = {"25": ["TestDay"]}
+
 def backers():
+    hide_it()
     global current_thing
     fake_time = [current_thing.year,current_thing.month-1]
 
@@ -82,6 +114,7 @@ def backers():
     get_current_month(current_thing)
 
 def mexters():
+    hide_it()
     global current_thing
     fake_time = [current_thing.year,current_thing.month+1]
 
@@ -98,18 +131,51 @@ def mexters():
     get_current_month(current_thing)
 
 def reset():
+    hide_it()
     global current_thing
     current_thing = datetime.datetime(trueDay.year,trueDay.month,trueDay.day)
     realButton.config(state=DISABLED)
     get_current_month(current_thing)
-    
+
+def hide_it():
+    global the_last_one
+    the_last_one = -1
+    the_holiday_menu.grid_forget()
+
+the_last_one = -1 #im putting this in a variable because OH GOODNESS GEE WILIKERS
 
 def test(event):
+    global the_last_one
     i = int(str(event.widget).split("!")[2].split("e")[1].split(".")[0])-9
 
-    print(i)
-    theOtherThing[i].config(bg="light sky blue")
-    theDays[i].config(style="WEDsa.TFrame", relief=SOLID)
+    if the_last_one != -1:
+        if theOtherThing[the_last_one].cget("text") == str(current_thing.day) and current_thing.month == trueDay.month and current_thing.year == trueDay.year:
+            theOtherThing[the_last_one].config(bg="light sky blue")
+            theDays[the_last_one].config(style="Today.TFrame", relief=SOLID)
+        else:
+            theOtherThing[the_last_one].config(bg="white")
+            theDays[the_last_one].config(style="Day.TFrame", relief=SOLID)
+            print(theOtherThing[the_last_one].cget("text"), current_thing.month, current_thing.year)
+            if has_a_holiday(theOtherThing[the_last_one].cget("text"), current_thing.month, current_thing.year):
+                theOtherThing[the_last_one].config(bg="tomato")
+                theDays[the_last_one].config(style="Holiday.TFrame", relief=SOLID)
+    
+    #print(theOtherThing[i].cget("text"))
+
+    if theOtherThing[i].cget("text") == "" or i == the_last_one:
+        if i == the_last_one:
+            the_last_one = -1
+        the_holiday_menu.grid_forget()
+        #print("no_go")
+        return
+    
+    the_holiday_menu.grid(column=9,row=0,sticky=(N))
+    
+    #the_holiday_menu.grid
+
+    theOtherThing[i].config(bg="light goldenrod")
+    theDays[i].config(style="Selected.TFrame", relief=SOLID)
+    the_last_one = i
 
 root = Tk()
 
@@ -118,6 +184,8 @@ root = Tk()
 #so 7 by 8, with the top being WIDE unlike the ones divided into 7ths
 
 root.title("Daily Calender")
+
+root.resizable(False, False)
 
 #s = ttk.Style()
 #s.theme_use('classic')
@@ -130,12 +198,14 @@ style = ttk.Style()
 
 #print(style.theme_settings(style.theme_use(), background="black"))
 
-style.configure("BW.TLabel", foreground="black", background="white")
-style.configure("WD.TFrame", background="gray67")
-style.configure("WED.TFrame", background="white")
-style.configure("WEDsa.TFrame", background="light sky blue")
+#style.configure("BW.TLabel", foreground="black", background="white")
+style.configure("NotADay.TFrame", background="gray67")
+style.configure("Day.TFrame", background="white")
+style.configure("Today.TFrame", background="light sky blue")
+style.configure("Selected.TFrame", background="light goldenrod")
+style.configure("Holiday.TFrame", background="tomato")
 
-#print(style.layout('WD.TFrame'))
+#print(style.layout('NotADay.TFrame'))
 
 style.configure("invis.TFrame", background=str(style.lookup("TFrame", "background", default="", state=())))
 
@@ -201,6 +271,14 @@ root.bind_class('Click', "<Button-1>", test)
 backButton.grid(column=0,row=9,sticky=(W))
 realButton.grid(column=3,row=9)
 mextButton.grid(column=6,row=9,sticky=(E))
+
+the_holiday_menu = LabelFrame(root,text="Holiday Menu", width=200,height=50*8.4, borderwidth=4)
+
+the_holiday_menu.grid(column=9,row=0,sticky=(N))
+
+the_holiday_menu.grid_forget()
+
+holiday_list = []
 
 trueDay = datetime.datetime.now()
 
