@@ -12,7 +12,7 @@ import datetime
 def has_a_holiday(day, month, year):
     if "_"+str(month) in holidays:
         if str(day) in holidays["_"+str(month)]:
-            print(get_all_holidays(day, month, year))
+            #print(get_all_holidays(day, month, year))
             return True
     if str(month) + str(year) in holidays:
         if str(day) in holidays[str(month) + str(year)]:
@@ -139,13 +139,33 @@ def reset():
 
 def hide_it():
     global the_last_one
+    global holiday_list
+    global which_true
     the_last_one = -1
     the_holiday_menu.grid_forget()
+    holiday_list = []
+    which_true = {}
+    for children in the_holiday_menu.winfo_children():
+        children.destroy()
 
 the_last_one = -1 #im putting this in a variable because OH GOODNESS GEE WILIKERS
 
+which_true = {}
+
+def otherTest():
+    global which_true
+    for children in the_holiday_menu.winfo_children():
+        if isinstance(children, Checkbutton):
+            print(which_true[str(children.cget("variable"))])
+            print(children.getvar(children.cget("variable")), bool(children.getvar(children.cget("variable"))))
+            if which_true[str(children.cget("variable"))] != bool(children.getvar(children.cget("variable"))):
+                children.config(text="AAAA")
+            which_true[str(children.cget("variable"))] = bool(children.getvar(children.cget("variable")))
+
 def test(event):
     global the_last_one
+    global holiday_list
+    global which_true
     i = int(str(event.widget).split("!")[2].split("e")[1].split(".")[0])-9
 
     if the_last_one != -1:
@@ -155,7 +175,7 @@ def test(event):
         else:
             theOtherThing[the_last_one].config(bg="white")
             theDays[the_last_one].config(style="Day.TFrame", relief=SOLID)
-            print(theOtherThing[the_last_one].cget("text"), current_thing.month, current_thing.year)
+            #print(theOtherThing[the_last_one].cget("text"), current_thing.month, current_thing.year)
             if has_a_holiday(theOtherThing[the_last_one].cget("text"), current_thing.month, current_thing.year):
                 theOtherThing[the_last_one].config(bg="tomato")
                 theDays[the_last_one].config(style="Holiday.TFrame", relief=SOLID)
@@ -165,11 +185,28 @@ def test(event):
     if theOtherThing[i].cget("text") == "" or i == the_last_one:
         if i == the_last_one:
             the_last_one = -1
+        which_true = {}
         the_holiday_menu.grid_forget()
+        holiday_list = []
+        for children in the_holiday_menu.winfo_children():
+            children.destroy()
         #print("no_go")
         return
     
     the_holiday_menu.grid(column=9,row=0,sticky=(N))
+
+    holiday_list = get_all_holidays(theOtherThing[i].cget("text"), current_thing.month, current_thing.year)
+
+    Frame(the_holiday_menu, width=200, height=0, borderwidth=0).pack()
+    #print(holiday_list)
+
+    for holi in holiday_list:
+        #Label(the_holiday_menu, text=holi[0]).pack()
+        awesoem = Checkbutton(the_holiday_menu, text=holi[0],command=otherTest, variable=holi[0])
+        awesoem.pack()
+        which_true[holi[0]] = holi[1]
+        if holi[1] == True:
+            awesoem.select()
     
     #the_holiday_menu.grid
 
