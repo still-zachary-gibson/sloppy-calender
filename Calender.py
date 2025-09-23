@@ -102,6 +102,14 @@ def reset():
     current_thing = datetime.datetime(trueDay.year,trueDay.month,trueDay.day)
     realButton.config(state=DISABLED)
     get_current_month(current_thing)
+    
+
+def test(event):
+    i = int(str(event.widget).split("!")[2].split("e")[1].split(".")[0])-9
+
+    print(i)
+    theOtherThing[i].config(bg="light sky blue")
+    theDays[i].config(style="WEDsa.TFrame", relief=SOLID)
 
 root = Tk()
 
@@ -173,6 +181,8 @@ calender.grid(column=0, row=0)
 calender.grid_rowconfigure(1,minsize=60)
 calender.grid_rowconfigure(8,minsize=20)
 
+#root.bind('<ButtonRelease-1>', test)
+
 okayTestBox.grid(column=0,row=0, columnspan=7)
 okayTestBox.pack_propagate(False)
 for i in range(7):
@@ -183,7 +193,10 @@ for i in range(6*7):
     #testing[i].grid(column=i%7,row=math.floor(i/7)+2, sticky=(W))
     theDays[i].grid(column=i%7,row=math.floor(i/7)+2, sticky=(W))
     theDays[i].pack_propagate(False)
+    theDays[i].bindtags('Click')
+    theOtherThing[i].bindtags('Click')
 
+root.bind_class('Click', "<Button-1>", test)
 
 backButton.grid(column=0,row=9,sticky=(W))
 realButton.grid(column=3,row=9)
