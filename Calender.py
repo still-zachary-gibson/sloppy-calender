@@ -14,21 +14,26 @@ def has_a_holiday(day, month, year):
         if str(day) in holidays["_"+str(month)]:
             #print(get_all_holidays(day, month, year))
             return True
-    if str(month) + str(year) in holidays:
-        if str(day) in holidays[str(month) + str(year)]:
+    if str(month) + "/" + str(year) in holidays:
+        if str(day) in holidays[str(month) + "/" + str(year)]:
             return True
+    if "|"+str(day) in holidays:
+        return True
 
 def get_all_holidays(day, month, year):
     return_ma = []
 
-    if str(month) + str(year) in holidays:
-        if str(day) in holidays[str(month) + str(year)]:
-            for holdiaf in holidays[str(month) + str(year)][str(day)]:
-                return_ma.append([holdiaf, False])
+    if str(month) + "/" + str(year) in holidays:
+        if str(day) in holidays[str(month) + "/" + str(year)]:
+            for holdiaf in holidays[str(month) + "/" + str(year)][str(day)]:
+                return_ma.append([holdiaf, 0])
     if "_"+str(month) in holidays:
         if str(day) in holidays["_"+str(month)]:
             for holdiaf in holidays["_"+str(month)][str(day)]:
-                return_ma.append([holdiaf, True])
+                return_ma.append([holdiaf, 1])
+    if "|"+str(day) in holidays:
+        for holdiaf in holidays["|"+str(day)]:
+            return_ma.append([holdiaf, 2])
 
     return return_ma
 
@@ -94,7 +99,8 @@ import math
 holidays = dict()
 
 holidays["_12"] = {"25": ["Christmas"]}
-holidays["122025"] = {"25": ["TestDay"]}
+holidays["12/2025"] = {"25": ["TestDay"]}
+holidays["|12"] = ["The twelve"]
 
 def backers():
     hide_it()
@@ -144,15 +150,15 @@ def hide_it():
     the_last_one = -1
     the_holiday_menu.grid_forget()
     holiday_list = []
-    which_true = {}
+    which_true = []
     for children in the_holiday_menu.winfo_children():
         children.destroy()
 
 the_last_one = -1 #im putting this in a variable because OH GOODNESS GEE WILIKERS
 
-which_true = {}
+which_true = []
 
-def otherTest():
+'''def otherTest():
     global which_true
     for children in the_holiday_menu.winfo_children():
         if isinstance(children, Checkbutton):
@@ -163,6 +169,87 @@ def otherTest():
                     print(children.cget("text"))
                     print(holiday_list)
             which_true[str(children.cget("variable"))] = bool(int(children.getvar(children.cget("variable"))))
+            '''
+
+def okay_check(index, value, op):
+    global current_thing
+    global holidays
+    global holiday_list
+    stupid = {"Don't Repeat" : 0, "Yearly" : 1, "Monthly": 2, "Remove": 3}
+    numba = index.split("_")[0]
+    #print(stupid[which_true[int(numba)][0].get()],which_true[int(numba)][1])
+    #print(stupid[which_true[int(index)][0].get()]) #what a stupid method just to read a darn variable
+    if (stupid[which_true[int(numba)][0].get()] == which_true[int(numba)][1]): #has it actually been changed? check
+        return #jobs done
+    holiday = index.split("_")[1]
+    my_info = -1
+    for neato in range(len(holiday_list)): #get the info for it
+        if (holiday_list[neato][0] == holiday):
+            my_info = holiday_list[neato]
+            break
+    #remove it from its old position~~~
+    if(my_info[1] == 2):
+        for okay in range(len(holidays["|" + theOtherThing[the_last_one].cget("text")])):
+            if(holidays["|" + theOtherThing[the_last_one].cget("text")][okay] == my_info[0]):
+                holidays["|" + theOtherThing[the_last_one].cget("text")].pop(okay)
+                break
+        if len(holidays["|" + theOtherThing[the_last_one].cget("text")]) == 0:
+            holidays.pop("|" + theOtherThing[the_last_one].cget("text"))
+    elif my_info[1] == 1:
+        for okay in range(len(holidays["_" + str(current_thing.month)][theOtherThing[the_last_one].cget("text")])):
+            if holidays["_" + str(current_thing.month)][theOtherThing[the_last_one].cget("text")][okay] == my_info[0]:
+                holidays["_" + str(current_thing.month)][theOtherThing[the_last_one].cget("text")].pop(okay)
+                break
+        if len(holidays["_" + str(current_thing.month)][theOtherThing[the_last_one].cget("text")]) == 0:
+            holidays["_" + str(current_thing.month)].pop(theOtherThing[the_last_one].cget("text"))
+        if len(holidays["_" + str(current_thing.month)]) == 0:
+            holidays.pop("_" + str(current_thing.month))
+    elif my_info[1] == 0:
+        for okay in range(len(holidays[str(current_thing.month) + "/" + str(current_thing.year)][theOtherThing[the_last_one].cget("text")])):
+            if holidays[str(current_thing.month) + "/" + str(current_thing.year)][theOtherThing[the_last_one].cget("text")][okay] == my_info[0]:
+                holidays[str(current_thing.month) + "/" + str(current_thing.year)][theOtherThing[the_last_one].cget("text")].pop(okay)
+                break
+        if len(holidays[str(current_thing.month) + "/" + str(current_thing.year)][theOtherThing[the_last_one].cget("text")]) == 0:
+            holidays[str(current_thing.month) + "/" + str(current_thing.year)].pop(theOtherThing[the_last_one].cget("text"))
+        if len(holidays[str(current_thing.month) + "/" + str(current_thing.year)]) == 0:
+            holidays.pop(str(current_thing.month) + "/" + str(current_thing.year))
+
+    #now to readd it!
+     
+    if stupid[which_true[int(numba)][0].get()] == 2:
+        if "|" + theOtherThing[the_last_one].cget("text") not in holidays:
+            holidays.update({"|" + theOtherThing[the_last_one].cget("text") : []})
+        holidays["|" + theOtherThing[the_last_one].cget("text")].append(my_info[0])
+    elif stupid[which_true[int(numba)][0].get()] == 1:
+        if "_" + str(current_thing.month) not in holidays:
+            holidays.update({"_" + str(current_thing.month) : {}})
+        if theOtherThing[the_last_one].cget("text") not in holidays["_" + str(current_thing.month)]:
+            holidays["_" + str(current_thing.month)].update({theOtherThing[the_last_one].cget("text"): []})
+        holidays["_" + str(current_thing.month)][theOtherThing[the_last_one].cget("text")].append(my_info[0])
+    elif stupid[which_true[int(numba)][0].get()] == 0:
+        if str(current_thing.month) + "/" + str(current_thing.year) not in holidays:
+            holidays.update({str(current_thing.month) + "/" + str(current_thing.year): {}})
+        if theOtherThing[the_last_one].cget("text") not in holidays[str(current_thing.month) + "/" + str(current_thing.year)]:
+            holidays[str(current_thing.month) + "/" + str(current_thing.year)].update({theOtherThing[the_last_one].cget("text"): []})
+        holidays[str(current_thing.month) + "/" + str(current_thing.year)][theOtherThing[the_last_one].cget("text")].append(my_info[0])
+
+    which_true[int(numba)][1] = stupid[which_true[int(numba)][0].get()]
+
+    #print(holiday_list)
+
+    for neato in range(len(holiday_list)): #get the info for it
+        if (holiday_list[neato][0] == holiday):
+            holiday_list[neato][1] = stupid[which_true[int(numba)][0].get()] #alter it here
+            break
+
+    #print(holiday_list)
+
+    #print(holidays)
+
+    get_current_month(current_thing)
+
+    theOtherThing[the_last_one].config(bg="light goldenrod")
+    theDays[the_last_one].config(style="Selected.TFrame", relief=SOLID)
 
 def test(event):
     global the_last_one
@@ -185,7 +272,7 @@ def test(event):
     #print(theOtherThing[i].cget("text"))
 
     
-    which_true = {}
+    which_true = []
     the_holiday_menu.grid_forget()
     holiday_list = []
     for children in the_holiday_menu.winfo_children():
@@ -194,12 +281,6 @@ def test(event):
     if theOtherThing[i].cget("text") == "" or i == the_last_one:
         if i == the_last_one:
             the_last_one = -1
-        which_true = {}
-        the_holiday_menu.grid_forget()
-        holiday_list = []
-        for children in the_holiday_menu.winfo_children():
-            children.destroy()
-        #print("no_go")
         return
     
     the_holiday_menu.grid(column=9,row=0,sticky=(N))
@@ -209,13 +290,20 @@ def test(event):
     Frame(the_holiday_menu, width=200, height=0, borderwidth=0).pack()
     #print(holiday_list)
 
-    for holi in holiday_list:
+    for holi in enumerate(holiday_list):
         #Label(the_holiday_menu, text=holi[0]).pack()
-        awesoem = Checkbutton(the_holiday_menu, text=holi[0],command=otherTest, variable=holi[0])
+        #awesoem = Checkbutton(the_holiday_menu, text=holi[0],command=otherTest, variable=holi[0])
+        really_cool = StringVar(root, "HEY!!!", str(holi[0]) + "_" + holi[1][0])
+        which_true.append([really_cool, holi[1][1]])
+        really_cool.trace_add("write", okay_check)
+        awesoem = ttk.Combobox(the_holiday_menu, values=("Don't Repeat", "Yearly", "Monthly", "Remove"), textvariable=really_cool, state="readonly")
+        #really_cool.set(awesoem)
+        which_true[len(which_true)-1].append(awesoem)
+        awesoem.current(holi[1][1])
         awesoem.pack()
-        which_true[holi[0]] = holi[1]
-        if holi[1] == True:
-            awesoem.select()
+        #which_true[holi[0]] = holi[1]
+        #if holi[1] == True:
+        #    awesoem.select()
     
     #the_holiday_menu.grid
 
@@ -343,5 +431,7 @@ get_current_month(current_thing)
 '''
 ttk.Label(calender, text="The Month Goes Here").grid(column=0, row=0, rowspan=7, sticky=(N))
 '''
+
+print("Did I make it?")
 
 root.mainloop()
