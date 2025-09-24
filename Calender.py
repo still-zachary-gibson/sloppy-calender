@@ -156,11 +156,13 @@ def otherTest():
     global which_true
     for children in the_holiday_menu.winfo_children():
         if isinstance(children, Checkbutton):
-            print(which_true[str(children.cget("variable"))])
-            print(children.getvar(children.cget("variable")), bool(children.getvar(children.cget("variable"))))
-            if which_true[str(children.cget("variable"))] != bool(children.getvar(children.cget("variable"))):
-                children.config(text="AAAA")
-            which_true[str(children.cget("variable"))] = bool(children.getvar(children.cget("variable")))
+            #print(which_true[str(children.cget("variable"))])
+            #print(children.getvar(children.cget("variable")), bool(int(children.getvar(children.cget("variable")))))
+            if which_true[str(children.cget("variable"))] != bool(int(children.getvar(children.cget("variable")))):
+                if bool(int(children.getvar(children.cget("variable")))):
+                    print(children.cget("text"))
+                    print(holiday_list)
+            which_true[str(children.cget("variable"))] = bool(int(children.getvar(children.cget("variable"))))
 
 def test(event):
     global the_last_one
@@ -181,6 +183,13 @@ def test(event):
                 theDays[the_last_one].config(style="Holiday.TFrame", relief=SOLID)
     
     #print(theOtherThing[i].cget("text"))
+
+    
+    which_true = {}
+    the_holiday_menu.grid_forget()
+    holiday_list = []
+    for children in the_holiday_menu.winfo_children():
+        children.destroy()
 
     if theOtherThing[i].cget("text") == "" or i == the_last_one:
         if i == the_last_one:
