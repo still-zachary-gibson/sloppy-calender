@@ -215,23 +215,29 @@ def okay_check(index, value, op):
             holidays.pop(str(current_thing.month) + "/" + str(current_thing.year))
 
     #now to readd it!
+
+    do_i_still_exist = False
+    do_i_still_exist = True #TEST CODE
      
     if stupid[which_true[int(numba)][0].get()] == 2:
         if "|" + theOtherThing[the_last_one].cget("text") not in holidays:
             holidays.update({"|" + theOtherThing[the_last_one].cget("text") : []})
-        holidays["|" + theOtherThing[the_last_one].cget("text")].append(my_info[0])
+        if my_info[0] not in holidays["|" + theOtherThing[the_last_one].cget("text")]:
+            holidays["|" + theOtherThing[the_last_one].cget("text")].append(my_info[0])
     elif stupid[which_true[int(numba)][0].get()] == 1:
         if "_" + str(current_thing.month) not in holidays:
             holidays.update({"_" + str(current_thing.month) : {}})
         if theOtherThing[the_last_one].cget("text") not in holidays["_" + str(current_thing.month)]:
             holidays["_" + str(current_thing.month)].update({theOtherThing[the_last_one].cget("text"): []})
-        holidays["_" + str(current_thing.month)][theOtherThing[the_last_one].cget("text")].append(my_info[0])
+        if my_info[0] not in holidays["_" + str(current_thing.month)][theOtherThing[the_last_one].cget("text")]:
+            holidays["_" + str(current_thing.month)][theOtherThing[the_last_one].cget("text")].append(my_info[0])
     elif stupid[which_true[int(numba)][0].get()] == 0:
         if str(current_thing.month) + "/" + str(current_thing.year) not in holidays:
             holidays.update({str(current_thing.month) + "/" + str(current_thing.year): {}})
         if theOtherThing[the_last_one].cget("text") not in holidays[str(current_thing.month) + "/" + str(current_thing.year)]:
             holidays[str(current_thing.month) + "/" + str(current_thing.year)].update({theOtherThing[the_last_one].cget("text"): []})
-        holidays[str(current_thing.month) + "/" + str(current_thing.year)][theOtherThing[the_last_one].cget("text")].append(my_info[0])
+        if my_info[0] not in holidays[str(current_thing.month) + "/" + str(current_thing.year)][theOtherThing[the_last_one].cget("text")]:
+            holidays[str(current_thing.month) + "/" + str(current_thing.year)][theOtherThing[the_last_one].cget("text")].append(my_info[0])
 
     which_true[int(numba)][1] = stupid[which_true[int(numba)][0].get()]
 
@@ -251,11 +257,14 @@ def okay_check(index, value, op):
     theOtherThing[the_last_one].config(bg="light goldenrod")
     theDays[the_last_one].config(style="Selected.TFrame", relief=SOLID)
 
-def test(event):
+def test(event, forced=-1):
     global the_last_one
     global holiday_list
     global which_true
-    i = int(str(event.widget).split("!")[2].split("e")[1].split(".")[0])-9
+    if forced != -1:
+        i = forced
+    else:
+        i = int(str(event.widget).split("!")[2].split("e")[1].split(".")[0])-9
 
     if the_last_one != -1:
         if theOtherThing[the_last_one].cget("text") == str(current_thing.day) and current_thing.month == trueDay.month and current_thing.year == trueDay.year:
@@ -300,7 +309,10 @@ def test(event):
         #really_cool.set(awesoem)
         which_true[len(which_true)-1].append(awesoem)
         awesoem.current(holi[1][1])
-        awesoem.pack()
+        awesoem.pack(side=RIGHT)
+
+        okay_test = Checkbutton(the_holiday_menu, text=holi[1][0])
+        okay_test.pack(side=LEFT)
         #which_true[holi[0]] = holi[1]
         #if holi[1] == True:
         #    awesoem.select()
