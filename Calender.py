@@ -216,8 +216,8 @@ def okay_check(index, value, op):
 
     #now to readd it!
 
-    do_i_still_exist = False
-    do_i_still_exist = True #TEST CODE
+    do_i_still_exist = False if stupid[which_true[int(numba)][0].get()] == 3 else True
+    #do_i_still_exist = True #TEST CODE
      
     if stupid[which_true[int(numba)][0].get()] == 2:
         if "|" + theOtherThing[the_last_one].cget("text") not in holidays:
@@ -243,9 +243,15 @@ def okay_check(index, value, op):
 
     #print(holiday_list)
 
+    if not do_i_still_exist:
+        which_true[int(numba)][4].destroy() #well we removed it so
+
     for neato in range(len(holiday_list)): #get the info for it
         if (holiday_list[neato][0] == holiday):
-            holiday_list[neato][1] = stupid[which_true[int(numba)][0].get()] #alter it here
+            if do_i_still_exist:
+                holiday_list[neato][1] = stupid[which_true[int(numba)][0].get()] #alter it here
+            else:
+                holiday_list.pop(neato)
             break
 
     #print(holiday_list)
@@ -254,8 +260,22 @@ def okay_check(index, value, op):
 
     get_current_month(current_thing)
 
+    #hold_the_i = the_last_one
+
+    #the_last_one = -1
+
+    #hide_it()
+
+    #test("bru", hold_the_i)
+
     theOtherThing[the_last_one].config(bg="light goldenrod")
     theDays[the_last_one].config(style="Selected.TFrame", relief=SOLID)
+
+def not_honor_place():
+    for come_on in which_true:
+        if int(come_on[5].get()) == 0:
+            come_on[2].set("Remove")
+            break
 
 def test(event, forced=-1):
     global the_last_one
@@ -296,28 +316,50 @@ def test(event, forced=-1):
 
     holiday_list = get_all_holidays(theOtherThing[i].cget("text"), current_thing.month, current_thing.year)
 
-    Frame(the_holiday_menu, width=200, height=0, borderwidth=0).pack()
+    #print(holiday_list)
+
+    holiday_list.sort()
+
+    #print(holiday_list)
+
+    Frame(the_holiday_menu, width=250, height=0, borderwidth=0).pack()
     #print(holiday_list)
 
     for holi in enumerate(holiday_list):
         #Label(the_holiday_menu, text=holi[0]).pack()
         #awesoem = Checkbutton(the_holiday_menu, text=holi[0],command=otherTest, variable=holi[0])
+
+        attempt = Frame(the_holiday_menu, width=180,height=50*8.4, borderwidth=0)
+
+        attempt.pack()
+
         really_cool = StringVar(root, "HEY!!!", str(holi[0]) + "_" + holi[1][0])
+        really_rad = StringVar(root, "HEY!!!", str(holi[0]) + "_" + holi[1][0] + "-")
         which_true.append([really_cool, holi[1][1]])
         really_cool.trace_add("write", okay_check)
-        awesoem = ttk.Combobox(the_holiday_menu, values=("Don't Repeat", "Yearly", "Monthly", "Remove"), textvariable=really_cool, state="readonly")
+        #REmove
+        awesoem = ttk.Combobox(attempt, values=("Don't Repeat", "Yearly", "Monthly"), textvariable=really_cool, state="readonly")
         #really_cool.set(awesoem)
         which_true[len(which_true)-1].append(awesoem)
         awesoem.current(holi[1][1])
         awesoem.pack(side=RIGHT)
 
-        okay_test = Checkbutton(the_holiday_menu, text=holi[1][0])
+        okay_test = Checkbutton(attempt, text=holi[1][0], command=not_honor_place, variable=really_rad)
         okay_test.pack(side=LEFT)
+        okay_test.select()
+
+        which_true[len(which_true)-1].append(okay_test)
+        which_true[len(which_true)-1].append(attempt)
+        which_true[len(which_true)-1].append(really_rad)
+
+
         #which_true[holi[0]] = holi[1]
         #if holi[1] == True:
         #    awesoem.select()
     
     #the_holiday_menu.grid
+
+    #Frame(the_holiday_menu, width=250, height=10, borderwidth=0).pack(side=BOTTOM, fill=BOTH)
 
     theOtherThing[i].config(bg="light goldenrod")
     theDays[i].config(style="Selected.TFrame", relief=SOLID)
