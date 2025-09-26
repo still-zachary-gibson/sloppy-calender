@@ -282,6 +282,11 @@ def add_the_holiday():
     global holidays
     global holiday_list
     global the_last_one
+    global the_other_stuff
+
+    if the_button_stuff[3].get() == "":
+        return
+
     stupid = {"Don't Repeat" : 0, "Yearly" : 1, "Monthly": 2, "Remove": 3}
 
     #we really only gotta handle the uh   uh thing
@@ -308,6 +313,8 @@ def add_the_holiday():
 
     get_current_month(current_thing)
 
+    the_other_stuff = [False,False]
+
     hold_the_i = the_last_one
 
     the_last_one = -1
@@ -320,13 +327,22 @@ def add_the_holiday():
     
     #print(holidays)
 
-the_button_stuff = []
+the_other_stuff = [False,False]
+
+def neato_func(index, value, op):
+    global the_button_stuff
+    global the_other_stuff
+    if len(the_button_stuff) == 0:
+        return
+    stupid = {"Don't Repeat" : 0, "Yearly" : 1, "Monthly": 2, "Remove": 3}
+    the_other_stuff[1] = stupid[the_button_stuff[1].get()]
 
 def test(event, forced=-1):
     global the_last_one
     global holiday_list
     global which_true
     global the_button_stuff
+    global the_other_stuff
     if forced != -1:
         i = forced
     else:
@@ -405,20 +421,33 @@ def test(event, forced=-1):
 
     Label(the_holiday_menu, text="Add new holiday:").pack()
 
-    cool_holiday_name = StringVar()
+    if the_other_stuff[0] == False:
+        cool_holiday_name = StringVar()
+        the_other_stuff[0] = cool_holiday_name
+    else:
+        cool_holiday_name = the_other_stuff[0]
 
     entry_field = Entry(the_holiday_menu, textvariable=cool_holiday_name)
     entry_field.pack()
 
-    this_is_the_reader = ttk.Combobox(the_holiday_menu, values=("Don't Repeat", "Yearly", "Monthly"), state="readonly")
+    the_button_stuff = []
 
-    this_is_the_reader.current(0)
+    why_are_you_evil = StringVar(root, "DUDE", "please work")
+    why_are_you_evil.trace_add("write",neato_func)
+
+    this_is_the_reader = ttk.Combobox(the_holiday_menu, values=("Don't Repeat", "Yearly", "Monthly"), textvariable=why_are_you_evil, state="readonly")
+
+    if the_other_stuff[1] == False:
+        this_is_the_reader.current(0)
+        the_other_stuff[1] = 0
+    else:
+        this_is_the_reader.current(the_other_stuff[1])
     this_is_the_reader.pack()
 
     butts = Button(the_holiday_menu, text="Add", command=add_the_holiday)
     butts.pack()
 
-    the_button_stuff = [entry_field, this_is_the_reader, butts, cool_holiday_name]
+    the_button_stuff = [entry_field, this_is_the_reader, butts, cool_holiday_name, why_are_you_evil]
     
     #the_holiday_menu.grid
 
