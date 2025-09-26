@@ -436,6 +436,10 @@ def test(event, forced=-1):
         #if holi[1] == True:
         #    awesoem.select()
 
+    #25 per thing
+
+    Frame(the_holiday_menu, width=250, height=280-25*len(holiday_list), borderwidth=0).pack(fill=Y)
+
     Label(the_holiday_menu, text="Add new holiday:").pack()
 
     if the_other_stuff[0] == False:
@@ -462,13 +466,15 @@ def test(event, forced=-1):
     this_is_the_reader.pack()
 
     butts = Button(the_holiday_menu, text="Add", command=add_the_holiday)
-    butts.pack()
+    butts.pack(pady=4)
 
     the_button_stuff = [entry_field, this_is_the_reader, butts, cool_holiday_name, why_are_you_evil]
     
     #the_holiday_menu.grid
 
     #Frame(the_holiday_menu, width=250, height=10, borderwidth=0).pack(side=BOTTOM, fill=BOTH)
+
+    #the_holiday_menu.configure(height=2342)
 
     theOtherThing[i].config(bg="light goldenrod")
     theDays[i].config(style="Selected.TFrame", relief=SOLID)
@@ -569,7 +575,7 @@ backButton.grid(column=0,row=9,sticky=(W))
 realButton.grid(column=3,row=9)
 mextButton.grid(column=6,row=9,sticky=(E))
 
-the_holiday_menu = LabelFrame(root,text="Holiday Menu", width=200,height=50*8.4, borderwidth=4)
+the_holiday_menu = LabelFrame(root,text="Holiday Menu", width=200,height=0, borderwidth=4)
 
 the_holiday_menu.grid(column=9,row=0,sticky=(N))
 
