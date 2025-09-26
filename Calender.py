@@ -277,10 +277,56 @@ def not_honor_place():
             come_on[2].set("Remove")
             break
 
+def add_the_holiday():
+    global current_thing
+    global holidays
+    global holiday_list
+    global the_last_one
+    stupid = {"Don't Repeat" : 0, "Yearly" : 1, "Monthly": 2, "Remove": 3}
+
+    #we really only gotta handle the uh   uh thing
+
+    if(stupid[the_button_stuff[1].get()] == 2):
+        if "|" + theOtherThing[the_last_one].cget("text") not in holidays:
+            holidays.update({"|" + theOtherThing[the_last_one].cget("text") : []})
+        if the_button_stuff[3].get() not in holidays["|" + theOtherThing[the_last_one].cget("text")]:
+            holidays["|" + theOtherThing[the_last_one].cget("text")].append(the_button_stuff[3].get())
+    elif(stupid[the_button_stuff[1].get()] == 1):
+        if "_" + str(current_thing.month) not in holidays:
+            holidays.update({"_" + str(current_thing.month) : {}})
+        if theOtherThing[the_last_one].cget("text") not in holidays["_" + str(current_thing.month)]:
+            holidays["_" + str(current_thing.month)].update({theOtherThing[the_last_one].cget("text"): []})
+        if the_button_stuff[3].get() not in holidays["_" + str(current_thing.month)][theOtherThing[the_last_one].cget("text")]:
+            holidays["_" + str(current_thing.month)][theOtherThing[the_last_one].cget("text")].append(the_button_stuff[3].get())
+    else:
+        if str(current_thing.month) + "/" + str(current_thing.year) not in holidays:
+            holidays.update({str(current_thing.month) + "/" + str(current_thing.year): {}})
+        if theOtherThing[the_last_one].cget("text") not in holidays[str(current_thing.month) + "/" + str(current_thing.year)]:
+            holidays[str(current_thing.month) + "/" + str(current_thing.year)].update({theOtherThing[the_last_one].cget("text"): []})
+        if the_button_stuff[3].get() not in holidays[str(current_thing.month) + "/" + str(current_thing.year)][theOtherThing[the_last_one].cget("text")]:
+            holidays[str(current_thing.month) + "/" + str(current_thing.year)][theOtherThing[the_last_one].cget("text")].append(the_button_stuff[3].get())
+
+    get_current_month(current_thing)
+
+    hold_the_i = the_last_one
+
+    the_last_one = -1
+
+    hide_it()
+
+    test("",hold_the_i)
+
+    #ugh i am gonna have to reload the list aren't i,,,,
+    
+    #print(holidays)
+
+the_button_stuff = []
+
 def test(event, forced=-1):
     global the_last_one
     global holiday_list
     global which_true
+    global the_button_stuff
     if forced != -1:
         i = forced
     else:
@@ -356,6 +402,23 @@ def test(event, forced=-1):
         #which_true[holi[0]] = holi[1]
         #if holi[1] == True:
         #    awesoem.select()
+
+    Label(the_holiday_menu, text="Add new holiday:").pack()
+
+    cool_holiday_name = StringVar()
+
+    entry_field = Entry(the_holiday_menu, textvariable=cool_holiday_name)
+    entry_field.pack()
+
+    this_is_the_reader = ttk.Combobox(the_holiday_menu, values=("Don't Repeat", "Yearly", "Monthly"), state="readonly")
+
+    this_is_the_reader.current(0)
+    this_is_the_reader.pack()
+
+    butts = Button(the_holiday_menu, text="Add", command=add_the_holiday)
+    butts.pack()
+
+    the_button_stuff = [entry_field, this_is_the_reader, butts, cool_holiday_name]
     
     #the_holiday_menu.grid
 
@@ -371,7 +434,7 @@ root = Tk()
 # Wait, top row has to be the month
 #so 7 by 8, with the top being WIDE unlike the ones divided into 7ths
 
-root.title("Daily Calender")
+root.title("Daily Calendar")
 
 root.resizable(False, False)
 
