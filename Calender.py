@@ -98,9 +98,22 @@ import math
 
 holidays = dict()
 
+'''
 holidays["_12"] = {"25": ["Christmas"]}
 holidays["12/2025"] = {"25": ["TestDay"]}
 holidays["|12"] = ["The twelve"]
+'''
+
+import json
+import os
+
+def saving_christmas(): #save the holiday info to some file
+    with open("holiday_info", 'w') as save_ma:
+        json.dump(holidays, save_ma)
+
+if os.path.isfile("holiday_info"):
+    with open("holiday_info", 'r') as load_ma:
+        holidays = json.load(load_ma)
 
 def backers():
     hide_it()
@@ -254,6 +267,8 @@ def okay_check(index, value, op):
                 holiday_list.pop(neato)
             break
 
+    saving_christmas()
+
     #print(holiday_list)
 
     #print(holidays)
@@ -310,6 +325,8 @@ def add_the_holiday():
             holidays[str(current_thing.month) + "/" + str(current_thing.year)].update({theOtherThing[the_last_one].cget("text"): []})
         if the_button_stuff[3].get() not in holidays[str(current_thing.month) + "/" + str(current_thing.year)][theOtherThing[the_last_one].cget("text")]:
             holidays[str(current_thing.month) + "/" + str(current_thing.year)][theOtherThing[the_last_one].cget("text")].append(the_button_stuff[3].get())
+
+    saving_christmas()
 
     get_current_month(current_thing)
 
